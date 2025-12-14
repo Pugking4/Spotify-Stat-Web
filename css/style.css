@@ -97,6 +97,7 @@ main {
     padding: 12px 16px;
     box-sizing: border-box;
     flex: 0 0 calc(50% - 8px);    /* still 2 per row */
+    max-width: 442px;
 }
 
 /* top row: cover + details */
@@ -156,6 +157,45 @@ main {
     justify-content: flex-start;
     font-size: 18px;
 }
+
+.track-title,
+.track-artists,
+.played-at,
+.popularity,
+.album-title,
+.album-artists,
+.context,
+.device {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-details,
+.card-bottom {
+    min-width: 0;  /* critical for flex + ellipsis */
+}
+
+/*
+@keyframes scroll-left {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.scrolling-text {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.scrolling-text::before {
+    content: attr(data-text);
+    position: absolute;
+    white-space: nowrap;
+    animation: scroll-left 15s linear infinite;
+    padding-left: 100%;
+}
+*/
 
 .played-at,
 .popularity,

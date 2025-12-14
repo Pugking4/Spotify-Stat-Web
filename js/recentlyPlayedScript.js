@@ -59,6 +59,12 @@ function renderTracks(tracks) {
         card.querySelector('.track-artists').textContent =
             track.track.artists.map(x => x.name).join(", ");
 
+        const textElements = card.querySelectorAll('.track-title, .track-artists, .played-at, .popularity, .album-title, .album-artists, .context, .device');
+        textElements.forEach(el => {
+            el.classList.add('scrolling-text');
+            el.setAttribute('data-text', el.textContent.trim());
+        });
+
         contentArea.appendChild(node);
     });
 }
