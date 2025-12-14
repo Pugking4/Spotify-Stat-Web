@@ -13,7 +13,7 @@ function formatLocalTime(isoString) {
 
 
 async function loadRecentlyPlayed() {
-    const response = await fetch('http://210.5.34.8:8080/stats/recentlyPlayed?limit=10');
+    const response = await fetch('https://210.5.34.8:8080/stats/recentlyPlayed?limit=10');
     if (!response.ok) {
         console.error('Request failed', response.status);
         return;
