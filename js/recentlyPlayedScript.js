@@ -1,4 +1,5 @@
 const contentArea  = document.querySelector('.content-area');
+const template = document.getElementById('recently-played-template');
 
 function formatLocalTime(isoString) {
     const date = new Date(isoString);   // parse GMT/UTC
@@ -27,31 +28,38 @@ async function loadRecentlyPlayed() {
     renderTracks(data);
 }
 
+function capitalizeFirstLetter(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
 function renderTracks(tracks) {
-    contentArea.innerHTML = '';           // clear existing cards
+    contentArea.innerHTML = '';
+
     tracks.forEach(track => {
-        const card = document.createElement('div');
-        card.className = 'recently-played-card';
-        card.innerHTML = `
-      <div class="card-top">
-    <div class="card-cover">
-      <img class="cover" src="${track.track.album.cover}" alt="${track.track.name}">
-    </div>
-    <div class="card-details">
-      <p class="played-at">Played at ${track.time_finished}</p>
-      <p class="popularity">Popularity: ${track.current_popularity}</p>
-      <p class="album-title">From album ${track.track.album.name}</p>
-      <p class="album-artists">Made by ${track.track.album.artists.map(x => x.name)}</p>
-      <p class="context">Played from ${track.context_type}</p>
-      <p class="device">on ${track.device.name} (${track.device.type})</p>
-    </div>
-  </div>
-  <div class="card-bottom">
-    <p class="track-title">${track.track.name}</p>
-    <p class="track-artists">${track.track.artists.map(x => x.name)}</p>
-  </div>
-    `;
-        contentArea.appendChild(card);
+        const node = template.content.cloneNode(true);
+        const card = node.querySelector('.recently-played-card');
+
+        card.querySelector('.cover').src = track.track.album.cover;
+        card.querySelector('.cover').alt = track.track.name;
+
+        card.querySelector('.played-at').textContent =
+            `Played on ${track.time_finished}`;
+        card.querySelector('.popularity').textContent =
+            `Popularity: ${track.current_popularity}`;
+        card.querySelector('.album-title').textContent =
+            `From ${track.track.album.album_type} ${track.track.album.name}`;
+        card.querySelector('.album-artists').textContent =
+            `${capitalizeFirstLetter(track.track.album.album_type)} by ${track.track.album.artists.map(x => x.name).join(", ")}`;
+        card.querySelector('.context').textContent =
+            `Played from ${track.context_type}`;
+        card.querySelector('.device').textContent =
+            `on ${track.device.name} (${track.device.type})`;
+
+        card.querySelector('.track-title').textContent = track.track.name;
+        card.querySelector('.track-artists').textContent =
+            track.track.artists.map(x => x.name).join(", ");
+
+        contentArea.appendChild(node);
     });
 }
 
