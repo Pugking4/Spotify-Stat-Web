@@ -17,9 +17,9 @@
 </header>
 <div class="settings-bar">
     <div class="settings-inner">
-        <button class="tracks selected">Tracks</button>
-        <button class="artists">Artists</button>
-        <button class="albums">Albums</button>
+        <button class="tracks-setting selected">Tracks</button>
+        <button class="artists-setting">Artists</button>
+        <button class="albums-setting">Albums</button>
     </div>
 </div>
 <main>
@@ -52,8 +52,8 @@
 
 </body>
 
-<template id="recently-played-template">
-    <div class="recently-played-card">
+<template id="recently-played-track-template">
+    <div class="recently-played-track-card">
         <div class="card-top">
             <div class="card-cover">
                 <img class="cover" src="images/placeholder.png" alt="Placeholder image">
@@ -70,6 +70,28 @@
         <div class="card-bottom">
             <p class="track-title"></p>
             <p class="track-artists"></p>
+        </div>
+    </div>
+</template>
+
+<template id="recently-played-artist-template">
+    <div class="recently-played-artist-card">
+        <div class="card-top">
+            <div class="card-cover">
+                <img class="cover" src="images/placeholder.png" alt="Placeholder image">
+            </div>
+            <div class="card-details">
+                <p class="from-tracks"></p>
+                <ul class="tracks"></ul>
+                <p class="popularity"></p>
+                <p class="followers"></p>
+                <p class="times-appeared"></p>
+                <p class="last-updated"></p>
+            </div>
+        </div>
+        <div class="card-bottom">
+            <p class="artist-name"></p>
+            <p class="genres"></p>
         </div>
     </div>
 </template>
