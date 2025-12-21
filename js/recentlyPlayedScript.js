@@ -5,6 +5,7 @@ const albumTemplate = document.getElementById('recently-played-album-template');
 const tracksButton = document.querySelector("button.tracks-setting");
 const artistsButton = document.querySelector("button.artists-setting");
 const albumsButton = document.querySelector("button.albums-setting");
+const limitInput = document.querySelector("#limit");
 
 function formatLocalTime(isoString) {
     const date = new Date(isoString);
@@ -27,8 +28,8 @@ function formatLocalTime(isoString) {
 }
 
 
-async function loadRecentlyPlayed() {
-    const response = await fetch('https://api.pugking4.dev/stats/recentlyPlayed?limit=10');
+async function loadRecentlyPlayed(limit) {
+    const response = await fetch(`https://api.pugking4.dev/stats/recentlyPlayed?limit=${limit}`);
     if (!response.ok) {
         console.error('Request failed', response.status);
         return;
@@ -94,7 +95,9 @@ function renderArtists(data) {
                     t.artists.forEach(a => {
                         if (a.id === artist.id) {
                             sum++;
-                            fromTracks.push(t.name);
+                            if (!fromTracks.includes(t.name)) {
+                                fromTracks.push(t.name);
+                            }
                         }
                     })
                 })
@@ -170,7 +173,9 @@ function renderAlbums(data) {
             tracks.forEach(t => {
                 if (t.album.id === album.id) {
                     sum++;
-                    fromTracks.push(t.name);
+                    if (!fromTracks.includes(t.name)) {
+                        fromTracks.push(t.name);
+                    }
                 }
             })
 
@@ -206,10 +211,10 @@ function renderAlbums(data) {
                 `Released on ${album.release_date}`;
             if (album.times_appeared > 1) {
                 card.querySelector('.times-appeared').textContent =
-                    `Listened to tracks in this album ${album.times_appeared} times`;
+                    `Listened to tracks within ${album.times_appeared} times`;
             } else {
                 card.querySelector('.times-appeared').textContent =
-                    `Listened to tracks in this album 1 time`;
+                    `Listened to tracks within 1 time`;
             }
 
             card.querySelector('.album-title').textContent = album.name;
@@ -235,15 +240,58 @@ function albumsButtonClickEvent(data) {
     renderAlbums(data);
 }
 
+function getCurrentSetting() {
+    if (tracksButton.classList.contains("selected")) {
+        return "tracks";
+    } else if (artistsButton.classList.contains("selected")) {
+        return "artists";
+    } else {
+        return "albums";
+    }
+}
+
 function assignSettingButtonEvents(data) {
     tracksButton.onclick = () => tracksButtonClickEvent(data);
     artistsButton.onclick = () => artistsButtonClickEvent(data);
     albumsButton.onclick = () => albumsButtonClickEvent(data);
 }
 
+async function limitChangeCommitted() {
+    let limit = getLimit();
+    const data = await loadRecentlyPlayed(limit);
+    assignSettingButtonEvents(data);
+    switch (getCurrentSetting()) {
+        case "tracks":
+            renderTracks(data);
+            break;
+        case "artists":
+            renderArtists(data);
+            break;
+        case "albums":
+            renderAlbums(data);
+            break;
+    }
+}
+
+function assignLimitEvents() {
+    limitInput.addEventListener("change", limitChangeCommitted);
+}
+
+function getLimit() {
+    let limit;
+    if (limitInput.checkValidity()) {
+        limit = limitInput.value;
+    } else {
+        limit = 10;
+        limitInput.value = 10;
+    }
+    return limit;
+}
 
 (async () => {
-    const data = await loadRecentlyPlayed();
+    let limit = getLimit();
+    const data = await loadRecentlyPlayed(limit);
     assignSettingButtonEvents(data);
+    assignLimitEvents();
     renderTracks(data);
 })();

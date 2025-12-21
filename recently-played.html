@@ -17,9 +17,30 @@
 </header>
 <div class="settings-bar">
     <div class="settings-inner">
-        <button class="tracks-setting selected">Tracks</button>
-        <button class="artists-setting">Artists</button>
-        <button class="albums-setting">Albums</button>
+        <div class="settings-left">
+            <button class="tracks-setting selected">Tracks</button>
+            <button class="artists-setting">Artists</button>
+            <button class="albums-setting">Albums</button>
+        </div>
+        <div class="settings-right">
+            <label for="limit">Results</label>
+            <input
+                    id="limit"
+                    type="number"
+                    list="limits"
+                    min="1"
+                    max="100"
+                    step="1"
+                    value="10"
+            />
+            <datalist id="limits">
+                <option>5</option>
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>100</option>
+            </datalist>
+        </div>
     </div>
 </div>
 <main>

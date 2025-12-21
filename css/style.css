@@ -65,6 +65,7 @@ header nav a {
     padding: 5px 10px;
     cursor: pointer;
     font-size: 16px;
+    font-family: Inter, sans-serif;
 }
 
 .settings-bar button:hover {
@@ -143,14 +144,11 @@ main {
     font-size: 20px;
     font-weight: 600;
 }
-.card-bottom .track-artists {
-    margin: 2px 0 0 0;
-    font-size: 14px;
-}
 
-.track-artists {
-    font-size: 14px;
+.card-bottom .track-artists,
+.card-bottom .album-artists {
     margin: 2px 0 0 0;
+    font-size: 14px;
 }
 
 .right-card {
@@ -236,7 +234,27 @@ footer a:hover {
     flex-direction: row;
     gap: 10px;                 /* space between buttons */
     align-items: center;
+    justify-content: space-between;
+}
+
+.settings-left {
     justify-content: flex-start;
+}
+
+.settings-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Aligns both label and input to the right */
+    gap: 1px;
+}
+
+.settings-right label {
+    background-color: transparent;
+    color: black;
+    border: none;
+    margin: 0;
+    font-size: 12px;
+    font-family: Inter, sans-serif;
 }
 
 /* Ensure artist card uses same flex layout */
@@ -284,13 +302,20 @@ footer a:hover {
 
 /* Use same text styles */
 p,
-li {
+ul {
     margin: 0 0 6px 0;
     font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+li {
+    white-space: normal;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
 
 .no-wrap {
     white-space: normal;
