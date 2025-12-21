@@ -61,7 +61,7 @@ function renderTracks(tracks) {
         card.querySelector('.popularity').textContent =
             `Popularity: ${track.current_popularity}`;
         card.querySelector('.album-title').textContent =
-            `From ${track.track.album.album_type} ${track.track.album.name}`;
+            `From ${track.track.album.name}`;
         card.querySelector('.album-artists').textContent =
             `${capitalizeFirstLetter(track.track.album.album_type)} by ${track.track.album.artists.map(x => x.name).join(", ")}`;
         card.querySelector('.context').textContent =
@@ -157,7 +157,67 @@ function updateSelectedOption(selectedElement) {
 }
 
 function renderAlbums(data) {
-    console.log("WIP");
+    contentArea.innerHTML = '';
+    let existingAlbums = [];
+    let tracks = data.map(x => x.track);
+    let albums = tracks.map(x => x.album);
+
+    albums.forEach(album => {
+        if (!existingAlbums.includes(album.id)) {
+            existingAlbums.push(album.id);
+            let sum = 0;
+            let fromTracks = [];
+            tracks.forEach(t => {
+                if (t.album.id === album.id) {
+                    sum++;
+                    fromTracks.push(t.name);
+                }
+            })
+
+            album.times_appeared = sum;
+            album.from_tracks = fromTracks;
+
+            const node = albumTemplate.content.cloneNode(true);
+            const card = node.querySelector('.recently-played-album-card');
+
+            card.querySelector('.cover').src = album.cover;
+            card.querySelector('.cover').alt = album.name;
+
+
+            let list = card.querySelector('ul.tracks');
+            if (album.from_tracks.length > 1) {
+                card.querySelector('.from-tracks').textContent =
+                    `From tracks:`;
+
+                album.from_tracks.forEach(t => {
+                    let listItem = document.createElement('li');
+                    listItem.textContent = t;
+                    list.appendChild(listItem);
+                })
+            } else {
+                card.querySelector('.from-tracks').textContent =
+                    `From track: ${album.from_tracks[0]}`;
+                list.remove();
+            }
+
+            card.querySelector('.album-type').textContent =
+                `This album is a ${capitalizeFirstLetter(album.album_type)}`;
+            card.querySelector('.release-date').textContent =
+                `Released on ${album.release_date}`;
+            if (album.times_appeared > 1) {
+                card.querySelector('.times-appeared').textContent =
+                    `Listened to tracks in this album ${album.times_appeared} times`;
+            } else {
+                card.querySelector('.times-appeared').textContent =
+                    `Listened to tracks in this album 1 time`;
+            }
+
+            card.querySelector('.album-title').textContent = album.name;
+            card.querySelector('.album-artists').textContent = album.artists.map(a => a.name).join(', ');
+
+            contentArea.appendChild(node);
+        }
+    });
 }
 
 function tracksButtonClickEvent(data) {

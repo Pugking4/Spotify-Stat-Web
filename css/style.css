@@ -91,7 +91,8 @@ main {
 }
 
 .recently-played-track-card,
-.recently-played-artist-card {
+.recently-played-artist-card,
+.recently-played-album-card {
     display: flex;
     flex-direction: column;       /* top row + bottom row */
     background-color: #d9d9d9;
@@ -136,19 +137,15 @@ main {
 .card-bottom {
     margin-top: 12px;
 }
-.card-bottom .track-title {
+
+.bold {
     margin: 0;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
 }
 .card-bottom .track-artists {
     margin: 2px 0 0 0;
     font-size: 14px;
-}
-
-.track-title {
-    font-size: 20px;
-    margin: 0;
 }
 
 .track-artists {
@@ -286,19 +283,7 @@ footer a:hover {
 }
 
 /* Use same text styles */
-.artist-name,
-.genres,
-.from-tracks,
-.tracks,
-.popularity,
-.followers,
-.times-appeared,
-.played-at,
-.popularity,
-.album-title,
-.album-artists,
-.context,
-.device,
+p,
 li {
     margin: 0 0 6px 0;
     font-size: 14px;
@@ -307,15 +292,15 @@ li {
     text-overflow: ellipsis;
 }
 
+.no-wrap {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+}
+
 .last-updated {
     margin: 0 0 6px 0;
     font-size: 14px;
-}
-
-.artist-name {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0;
 }
 
 .genres {

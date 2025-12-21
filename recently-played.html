@@ -68,7 +68,7 @@
             </div>
         </div>
         <div class="card-bottom">
-            <p class="track-title"></p>
+            <p class="track-title bold"></p>
             <p class="track-artists"></p>
         </div>
     </div>
@@ -82,7 +82,7 @@
             </div>
             <div class="card-details">
                 <p class="from-tracks"></p>
-                <ul class="tracks"></ul>
+                <ul class="tracks no-wrap"></ul>
                 <p class="popularity"></p>
                 <p class="followers"></p>
                 <p class="times-appeared"></p>
@@ -90,8 +90,29 @@
             </div>
         </div>
         <div class="card-bottom">
-            <p class="artist-name"></p>
+            <p class="artist-name bold"></p>
             <p class="genres"></p>
+        </div>
+    </div>
+</template>
+
+<template id="recently-played-album-template">
+    <div class="recently-played-album-card">
+        <div class="card-top">
+            <div class="card-cover">
+                <img class="cover" src="images/placeholder.png" alt="Placeholder image">
+            </div>
+            <div class="card-details">
+                <p class="from-tracks"></p>
+                <ul class="tracks"></ul>
+                <p class="album-type"></p>
+                <p class="release-date"></p>
+                <p class="times-appeared no-wrap"></p>
+            </div>
+        </div>
+        <div class="card-bottom">
+            <p class="album-title bold"></p>
+            <p class="album-artists"></p>
         </div>
     </div>
 </template>
