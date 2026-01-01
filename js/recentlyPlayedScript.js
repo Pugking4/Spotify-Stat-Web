@@ -29,7 +29,7 @@ function formatLocalTime(isoString) {
 
 
 async function loadRecentlyPlayed(limit) {
-    const response = await fetch(`https://api.pugking4.dev/stats/recentlyPlayed?limit=${limit}`);
+    const response = await fetch(`https://api.pugking4.dev/stats/recently-played?limit=${limit}`);
     if (!response.ok) {
         console.error('Request failed', response.status);
         return;
