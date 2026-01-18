@@ -1,10 +1,9 @@
-const contentArea  = document.querySelector('.content-area');
-const trackTemplate = document.getElementById('recently-played-track-template');
-const artistTemplate = document.getElementById('recently-played-artist-template');
-const albumTemplate = document.getElementById('recently-played-album-template');
-const tracksButton = document.querySelector("button.tracks-setting");
-const artistsButton = document.querySelector("button.artists-setting");
-const albumsButton = document.querySelector("button.albums-setting");
+const contentArea  = document.querySelector('.content');
+const mediaCardTemplate = document.getElementById('media-card-template');
+const trackDetailsTemplate = document.getElementById('track-media-card-details-template');
+const artistDetailsTemplate = document.getElementById('artist-media-card-details-template');
+const albumDetailsTemplate = document.getElementById('album-media-card-details-template');
+const settingsButtons = document.querySelectorAll(".settings-bar__item");
 const limitInput = document.querySelector("#limit");
 
 function formatLocalTime(isoString) {
@@ -27,6 +26,172 @@ function formatLocalTime(isoString) {
     }
 }
 
+function createMediaCard(primaryText, secondaryText, cover, altCoverText) {
+    const fragment = mediaCardTemplate.content.cloneNode(true);
+    const card = fragment.querySelector('.media-card');
+
+
+    card.querySelector('.media-card__cover').src = cover ?? "images/placeholder.png";
+    card.querySelector('.media-card__cover').alt = altCoverText;
+    card.querySelector('.media-card__primary-text').textContent = primaryText;
+    card.querySelector('.media-card__secondary-text').textContent = secondaryText;
+
+    contentArea.appendChild(fragment);
+    return card;
+}
+
+
+function createTrackMediaCard(track) {
+    const details = trackDetailsTemplate.content.cloneNode(true);
+
+    let artistsText = track.track.artists.map(x => x.name).join(", ");
+    let card = createMediaCard(track.track.name, artistsText, track.track.album.cover, track.track.name);
+
+    details.querySelector('.media-card__line--played-at').textContent =
+        `Played on ${track.time_finished}`;
+    details.querySelector('.media-card__line--popularity').textContent =
+        `Popularity: ${track.current_popularity}`;
+    details.querySelector('.media-card__line--album-title').textContent =
+        `From ${track.track.album.name}`;
+    details.querySelector('.media-card__line--album-artists').textContent =
+        `${capitaliseFirstLetter(track.track.album.album_type)} by ${track.track.album.artists.map(x => x.name).join(", ")}`;
+    details.querySelector('.media-card__line--context').textContent =
+        `Played from ${track.context_type}`;
+    details.querySelector('.media-card__line--device').textContent =
+        `on ${track.device.name} (${track.device.type})`;
+
+    let cardDetails = card.querySelector(".media-card__details")
+    cardDetails.appendChild(details);
+    return card;
+}
+
+function createArtistMediaCard(track, existingArtists, allTracks) {
+    for (let artist of track.artists) {
+        if (existingArtists.includes(artist.id)) {
+            return;
+        } else {
+            existingArtists.push(artist.id);
+            let sum = 0;
+            let fromTracks = [];
+            for (let t of allTracks) {
+                for (let a of t.artists) {
+                    if (a.id === artist.id) {
+                        sum++;
+                        if (!fromTracks.includes(t.name)) {
+                            fromTracks.push(t.name);
+                        }
+                    }
+                }
+            }
+
+            artist.times_appeared = sum;
+            artist.from_tracks = fromTracks;
+
+
+            let genresText = artist.genres ? artist.genres.split(',').join(', ') : '';
+            const card = createMediaCard(artist.name, genresText, artist.image, artist.name);
+            const details = artistDetailsTemplate.content.cloneNode(true);
+
+
+            let listLabel = details.querySelector(".media-card__from-tracks-label");
+            let list = details.querySelector('.media-card__from-tracks-list');
+            if (artist.from_tracks.length > 1) {
+                listLabel.textContent = `From tracks:`;
+
+                for (let t of artist.from_tracks) {
+                    let listItem = document.createElement('li');
+                    listItem.classList.add("media-card__from-tracks-item");
+                    listItem.textContent = t;
+                    list.appendChild(listItem);
+                }
+            } else {
+                listLabel.textContent = `From track: ${artist.from_tracks[0]}`;
+                list.remove();
+            }
+
+            details.querySelector('.media-card__line--popularity').textContent =
+                `Popularity: ${artist.popularity}`;
+            details.querySelector('.media-card__line--followers').textContent =
+                `Followers: ${artist.followers}`;
+            if (artist.times_appeared > 1) {
+                details.querySelector('.media-card__line--times-appeared').textContent =
+                    `Appeared in tracks ${artist.times_appeared} times`;
+            } else {
+                details.querySelector('.media-card__line--times-appeared').textContent =
+                    `Appeared in tracks ${artist.times_appeared} time`;
+            }
+
+            details.querySelector('.media-card__line--last-updated').textContent =
+                `Updated on ${formatLocalTime(artist.updated_at)}`;
+
+            let cardDetails = card.querySelector(".media-card__details");
+            cardDetails.appendChild(details);
+            return card;
+        }
+    }
+}
+
+function createAlbumMediaCard(album, existingAlbums, allTracks) {
+    if (!existingAlbums.includes(album.id)) {
+        existingAlbums.push(album.id);
+        let sum = 0;
+        let fromTracks = [];
+        for (let t of allTracks) {
+            if (t.album.id === album.id) {
+                sum++;
+                if (!fromTracks.includes(t.name)) {
+                    fromTracks.push(t.name);
+                }
+            }
+        }
+
+        album.times_appeared = sum;
+        album.from_tracks = fromTracks;
+
+        let artistsText = album.artists.map(a => a.name).join(', ');
+        const card = createMediaCard(album.name, artistsText, album.cover, album.name);
+        const details = albumDetailsTemplate.content.cloneNode(true);
+
+        let list = details.querySelector('.media-card__from-tracks-list');
+        let label = details.querySelector('.media-card__from-tracks-label');
+        if (album.from_tracks.length > 1) {
+            label.textContent = `From tracks:`;
+
+            for (let t of album.from_tracks) {
+                let listItem = document.createElement('li');
+                listItem.classList.add("media-card__from-tracks-item");
+                listItem.textContent = t;
+                list.appendChild(listItem);
+            }
+        } else {
+            label.textContent = `From track: ${album.from_tracks[0]}`;
+            list.remove();
+        }
+
+        details.querySelector('.media-card__line--album-type').textContent =
+            `This album is a ${capitaliseFirstLetter(album.album_type)}`;
+        details.querySelector('.media-card__line--release-date').textContent =
+            `Released on ${album.release_date}`;
+        if (album.times_appeared > 1) {
+            details.querySelector('.media-card__line--times-appeared').textContent =
+                `Listened to tracks within ${album.times_appeared} times`;
+        } else {
+            details.querySelector('.media-card__line--times-appeared').textContent =
+                `Listened to tracks within 1 time`;
+        }
+
+        let cardDetails = card.querySelector(".media-card__details");
+        cardDetails.appendChild(details);
+        return card;
+    }
+}
+
+function getSettingsButton(view) {
+    for (let btn of settingsButtons) {
+        if (btn.dataset.view == view) return btn;
+    }
+    return "error";
+}
 
 async function loadRecentlyPlayed(limit) {
     const response = await fetch(`https://api.pugking4.dev/stats/recently-played?limit=${limit}`);
@@ -43,39 +208,16 @@ async function loadRecentlyPlayed(limit) {
     return data;
 }
 
-function capitalizeFirstLetter(val) {
+function capitaliseFirstLetter(val) {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 
 function renderTracks(tracks) {
     contentArea.innerHTML = '';
 
-    tracks.forEach(track => {
-        const node = trackTemplate.content.cloneNode(true);
-        const card = node.querySelector('.recently-played-track-card');
-
-        card.querySelector('.cover').src = track.track.album.cover;
-        card.querySelector('.cover').alt = track.track.name;
-
-        card.querySelector('.played-at').textContent =
-            `Played on ${track.time_finished}`;
-        card.querySelector('.popularity').textContent =
-            `Popularity: ${track.current_popularity}`;
-        card.querySelector('.album-title').textContent =
-            `From ${track.track.album.name}`;
-        card.querySelector('.album-artists').textContent =
-            `${capitalizeFirstLetter(track.track.album.album_type)} by ${track.track.album.artists.map(x => x.name).join(", ")}`;
-        card.querySelector('.context').textContent =
-            `Played from ${track.context_type}`;
-        card.querySelector('.device').textContent =
-            `on ${track.device.name} (${track.device.type})`;
-
-        card.querySelector('.track-title').textContent = track.track.name;
-        card.querySelector('.track-artists').textContent =
-            track.track.artists.map(x => x.name).join(", ");
-
-        contentArea.appendChild(node);
-    });
+    for (let track of tracks) {
+        createTrackMediaCard(track);
+    }
 }
 
 function renderArtists(data) {
@@ -83,80 +225,14 @@ function renderArtists(data) {
     let existingArtists = [];
     let tracks = data.map(x => x.track);
 
-    tracks.forEach(track => {
-        track.artists.forEach(artist => {
-            if (existingArtists.includes(artist.id)) {
-                return;
-            } else {
-                existingArtists.push(artist.id);
-                let sum = 0;
-                let fromTracks = [];
-                tracks.forEach(t => {
-                    t.artists.forEach(a => {
-                        if (a.id === artist.id) {
-                            sum++;
-                            if (!fromTracks.includes(t.name)) {
-                                fromTracks.push(t.name);
-                            }
-                        }
-                    })
-                })
-
-                artist.times_appeared = sum;
-                artist.from_tracks = fromTracks;
-
-                const node = artistTemplate.content.cloneNode(true);
-                const card = node.querySelector('.recently-played-artist-card');
-
-                card.querySelector('.cover').src = artist.image;
-                card.querySelector('.cover').alt = artist.name;
-
-
-                let list = card.querySelector('ul.tracks');
-                if (artist.from_tracks.length > 1) {
-                    card.querySelector('.from-tracks').textContent =
-                        `From tracks:`;
-
-                    artist.from_tracks.forEach(t => {
-                        let listItem = document.createElement('li');
-                        listItem.textContent = t;
-                        list.appendChild(listItem);
-                    })
-                } else {
-                    card.querySelector('.from-tracks').textContent =
-                        `From track: ${artist.from_tracks[0]}`;
-                    list.remove();
-                }
-
-                card.querySelector('.popularity').textContent =
-                    `Popularity: ${artist.popularity}`;
-                card.querySelector('.followers').textContent =
-                    `Followers: ${artist.followers}`;
-                if (artist.times_appeared > 1) {
-                    card.querySelector('.times-appeared').textContent =
-                        `Appeared in tracks ${artist.times_appeared} times`;
-                } else {
-                    card.querySelector('.times-appeared').textContent =
-                        `Appeared in tracks ${artist.times_appeared} time`;
-                }
-
-                card.querySelector('.last-updated').textContent =
-                    `Updated on ${formatLocalTime(artist.updated_at)}`;
-
-                card.querySelector('.artist-name').textContent = artist.name;
-                card.querySelector('.genres').textContent = artist.genres ? artist.genres.split(',').join(', ') : '';
-
-                contentArea.appendChild(node);
-            }
-        })
-    });
+    for (let track of tracks) {
+        createArtistMediaCard(track, existingArtists, tracks);
+    }
 }
 
 function updateSelectedOption(selectedElement) {
-    document.querySelectorAll('.settings-inner button').forEach(btn => btn.classList.remove('selected'));
-
-    // Add 'selected' class to the clicked element
-    selectedElement.classList.add('selected');
+    document.querySelector('.settings-bar__item--active').classList.remove('settings-bar__item--active');
+    selectedElement.classList.add('settings-bar__item--active');
 }
 
 function renderAlbums(data) {
@@ -165,95 +241,47 @@ function renderAlbums(data) {
     let tracks = data.map(x => x.track);
     let albums = tracks.map(x => x.album);
 
-    albums.forEach(album => {
-        if (!existingAlbums.includes(album.id)) {
-            existingAlbums.push(album.id);
-            let sum = 0;
-            let fromTracks = [];
-            tracks.forEach(t => {
-                if (t.album.id === album.id) {
-                    sum++;
-                    if (!fromTracks.includes(t.name)) {
-                        fromTracks.push(t.name);
-                    }
-                }
-            })
-
-            album.times_appeared = sum;
-            album.from_tracks = fromTracks;
-
-            const node = albumTemplate.content.cloneNode(true);
-            const card = node.querySelector('.recently-played-album-card');
-
-            card.querySelector('.cover').src = album.cover;
-            card.querySelector('.cover').alt = album.name;
-
-
-            let list = card.querySelector('ul.tracks');
-            if (album.from_tracks.length > 1) {
-                card.querySelector('.from-tracks').textContent =
-                    `From tracks:`;
-
-                album.from_tracks.forEach(t => {
-                    let listItem = document.createElement('li');
-                    listItem.textContent = t;
-                    list.appendChild(listItem);
-                })
-            } else {
-                card.querySelector('.from-tracks').textContent =
-                    `From track: ${album.from_tracks[0]}`;
-                list.remove();
-            }
-
-            card.querySelector('.album-type').textContent =
-                `This album is a ${capitalizeFirstLetter(album.album_type)}`;
-            card.querySelector('.release-date').textContent =
-                `Released on ${album.release_date}`;
-            if (album.times_appeared > 1) {
-                card.querySelector('.times-appeared').textContent =
-                    `Listened to tracks within ${album.times_appeared} times`;
-            } else {
-                card.querySelector('.times-appeared').textContent =
-                    `Listened to tracks within 1 time`;
-            }
-
-            card.querySelector('.album-title').textContent = album.name;
-            card.querySelector('.album-artists').textContent = album.artists.map(a => a.name).join(', ');
-
-            contentArea.appendChild(node);
-        }
-    });
+    for (let album of albums) {
+        createAlbumMediaCard(album, existingAlbums, tracks);
+    }
 }
 
 function tracksButtonClickEvent(data) {
-    updateSelectedOption(tracksButton);
+    updateSelectedOption(getSettingsButton("tracks"));
     renderTracks(data);
 }
 
 function artistsButtonClickEvent(data) {
-    updateSelectedOption(artistsButton);
+    updateSelectedOption(getSettingsButton("artists"));
     renderArtists(data);
 }
 
 function albumsButtonClickEvent(data) {
-    updateSelectedOption(albumsButton);
+    updateSelectedOption(getSettingsButton("albums"));
     renderAlbums(data);
 }
 
 function getCurrentSetting() {
-    if (tracksButton.classList.contains("selected")) {
-        return "tracks";
-    } else if (artistsButton.classList.contains("selected")) {
-        return "artists";
-    } else {
-        return "albums";
+    for (let btn of settingsButtons) {
+        if (btn.classList.contains("settings-bar__item--active")) return btn.dataset.view;
     }
+    return "none"
 }
 
 function assignSettingButtonEvents(data) {
-    tracksButton.onclick = () => tracksButtonClickEvent(data);
-    artistsButton.onclick = () => artistsButtonClickEvent(data);
-    albumsButton.onclick = () => albumsButtonClickEvent(data);
+    for (let btn of settingsButtons) {
+        switch (btn.dataset.view) {
+            case "tracks":
+                btn.onclick = () => tracksButtonClickEvent(data);
+                break;
+            case "artists":
+                btn.onclick = () => artistsButtonClickEvent(data);
+                break;
+            case "albums":
+                btn.onclick = () => albumsButtonClickEvent(data);
+                break;
+        }
+    }
 }
 
 async function limitChangeCommitted() {

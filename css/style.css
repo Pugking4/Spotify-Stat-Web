@@ -1,4 +1,5 @@
-body {
+/* Base / layout */
+.page {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -6,7 +7,7 @@ body {
     padding: 0;
 }
 
-header {
+.page__header {
     background-color: black;
     color: white;
     margin: 0;
@@ -20,27 +21,83 @@ header {
     z-index: 1000; /* Ensure header stays on top */
 }
 
-header nav {
+.page__main {
+    /*padding: 20px;*/
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: flex-start; /* Keep content at the top */
+    font-family: Inter, sans-serif;
+}
+
+.page__footer {
+    margin-top: auto;                 /* pushes footer to bottom if page is short */
+    background-color: #111;
+    color: #eee;
+    padding: 10px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.page__footer-content {
+    display: flex;
+    justify-content: space-between;   /* name left, GitHub right */
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+}
+
+.page__footer-author-link {
+    color: #9fd3ff;
+    text-decoration: none;
+}
+
+.page__footer-author-link:hover {
+    text-decoration: underline;
+}
+
+
+/* Navigation bar */
+.navbar {
     display: flex;
     justify-content: flex-end; /* Align links to the right */
     align-items: center;
     height: 60px; /* Set a fixed height */
     padding: 0 20px; /* Add padding on the sides */
-    gap: 15px; /* Add space between links */
 }
 
-header nav a {
+.navbar__list {
+    display: flex; /* puts li items in a row */
+    gap: 15px; /* spacing between links */
+    list-style: none; /* remove bullets */
+    margin: 0; /* remove default margins */
+    padding: 0; /* remove default left padding */
+}
+
+.navbar__item {
+
+}
+
+.navbar__link {
     color: whitesmoke;
     font-family: Inter, sans-serif;
     font-weight: normal;
     text-decoration: none;
     padding: 10px;
+    display: block;
 }
 
-.selected {
+.navbar__link--active {
     font-weight: bold;
 }
 
+.navbar__link--active {
+    font-weight: bold;
+}
+
+
+/* Settings bar */
 .settings-bar {
     background-color: white;
     border-bottom: 2px solid blueviolet;
@@ -58,174 +115,7 @@ header nav a {
     box-sizing: border-box; /* Include padding/border in width */
 }
 
-.settings-bar button {
-    background-color: transparent;
-    color: black;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 16px;
-    font-family: Inter, sans-serif;
-}
-
-.settings-bar button:hover {
-    background-color: #777;
-}
-
-main {
-    /*padding: 20px;*/
-    display: flex;
-    justify-content: center; /* Center content horizontally */
-    align-items: flex-start; /* Keep content at the top */
-    font-family: Inter, sans-serif;
-}
-
-.content-area {
-    display: flex;
-    flex-wrap: wrap;
-    width: 900px;
-    background-color: whitesmoke;
-    justify-content: flex-start;   /* or space-between */
-    align-items: flex-start;
-    padding: 10px;
-    gap: 10px;                     /* use gap instead of margin on cards */
-}
-
-.recently-played-track-card,
-.recently-played-artist-card,
-.recently-played-album-card {
-    display: flex;
-    flex-direction: column;       /* top row + bottom row */
-    background-color: #d9d9d9;
-    padding: 12px 16px;
-    box-sizing: border-box;
-    flex: 0 0 calc(50% - 8px);    /* still 2 per row */
-    max-width: 442px;
-    height: 240px;
-}
-
-/* top row: cover + details */
-.card-top {
-    display: flex;
-    align-items: stretch;
-    gap: 24px;
-}
-
-/* cover box */
-.card-cover {
-    flex: 0 0 160px;
-    display: flex;
-}
-.card-cover .cover {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    aspect-ratio: 1 / 1;
-    max-width: 160px;
-    max-height: 160px;
-}
-
-/* details on the right */
-.card-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
-    max-height: 160px;
-}
-
-/* bottom row: title + artists full width */
-.card-bottom {
-    margin-top: 12px;
-}
-
-.bold {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.card-bottom .track-artists,
-.card-bottom .album-artists {
-    margin: 2px 0 0 0;
-    font-size: 14px;
-}
-
-.right-card {
-    display: flex;
-    flex-direction: column;        /* stack all detail lines */
-    justify-content: flex-start;
-    font-size: 18px;
-}
-
-.track-title,
-.track-artists,
-.played-at,
-.popularity,
-.album-title,
-.album-artists,
-.context,
-.device {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.card-details,
-.card-bottom {
-    min-width: 0;  /* critical for flex + ellipsis */
-}
-
-/*
-@keyframes scroll-left {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-}
-
-.scrolling-text {
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-}
-
-.scrolling-text::before {
-    content: attr(data-text);
-    position: absolute;
-    white-space: nowrap;
-    animation: scroll-left 15s linear infinite;
-    padding-left: 100%;
-}
-*/
-
-footer {
-    margin-top: auto;                 /* pushes footer to bottom if page is short */
-    background-color: #111;
-    color: #eee;
-    padding: 10px 20px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.footer-content {
-    display: flex;
-    justify-content: space-between;   /* name left, GitHub right */
-    align-items: center;
-    max-width: 900px;
-    margin: 0 auto;
-    font-family: Inter, sans-serif;
-    font-size: 14px;
-}
-
-footer a {
-    color: #9fd3ff;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
-
-.settings-inner {
+.settings-bar__inner {
     width: 100%;
     max-width: 900px; /* same as .content-area width */
     margin: 0 auto;            /* center within page */
@@ -237,18 +127,18 @@ footer a:hover {
     justify-content: space-between;
 }
 
-.settings-left {
+.settings-bar__left {
     justify-content: flex-start;
 }
 
-.settings-right {
+.settings-bar__right {
     display: flex;
     flex-direction: column;
     align-items: center; /* Aligns both label and input to the right */
     gap: 1px;
 }
 
-.settings-right label {
+.settings-bar__label {
     background-color: transparent;
     color: black;
     border: none;
@@ -257,30 +147,62 @@ footer a:hover {
     font-family: Inter, sans-serif;
 }
 
-/* Ensure artist card uses same flex layout */
-.recently-played-artist-card {
+.settings-bar__item {
+    background-color: transparent;
+    color: black;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: Inter, sans-serif;
+    font-weight: normal;
+}
+
+.settings-bar__item--active {
+    font-weight: bold;
+}
+
+.settings-bar__item:hover {
+    background-color: #777;
+}
+
+
+/* Content */
+.content {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    width: 900px;
+    background-color: whitesmoke;
+    justify-content: flex-start;   /* or space-between */
+    align-items: flex-start;
+    padding: 10px;
+    gap: 10px;                     /* use gap instead of margin on cards */
+}
+
+
+/* Media Card */
+.media-card {
+    display: flex;
+    flex-direction: column;       /* top row + bottom row */
     background-color: #d9d9d9;
     padding: 12px 16px;
     box-sizing: border-box;
-    flex: 0 0 calc(50% - 8px);
+    flex: 0 0 calc(50% - 8px);    /* still 2 per row */
     max-width: 442px;
     height: 240px;
 }
 
-/* Top row: cover + details */
-.card-top {
+.media-card__top {
     display: flex;
     align-items: stretch;
     gap: 24px;
 }
 
-.card-cover {
+.media-card__cover-wrap {
     flex: 0 0 160px;
     display: flex;
 }
-.card-cover .cover {
+.media-card__cover {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -289,46 +211,57 @@ footer a:hover {
     max-height: 160px;
 }
 
-.card-details {
+.media-card__details {
     flex: 1;
     display: flex;
     flex-direction: column;
-    font-size: 14px;
+    max-height: 160px;
+    max-width: 226px;
 }
 
-.card-bottom {
+.media-card__bottom {
     margin-top: 12px;
+    min-width: 0;
 }
 
-/* Use same text styles */
-p,
-ul {
-    margin: 0 0 6px 0;
+.media-card__primary-text {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.media-card__secondary-text {
+    margin: 2px 0 0 0;
     font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-li {
-    white-space: normal;
-    overflow-wrap: break-word;
-    max-width: 100%;
-}
-
-
-.no-wrap {
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-}
-
-.last-updated {
+.media-card__line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin: 0 0 6px 0;
     font-size: 14px;
+    line-height: 1.2;
 }
 
-.genres {
-    margin: 2px 0 0 0;
-    font-size: 14px;
+.media-card__line--from-tracks {
+    margin: 0 0 3px 0;
+}
+
+.media-card__from-tracks-label {
+    margin: 0 0 3px 0;
+}
+
+.media-card__from-tracks-list {
+    margin: 0;
+}
+
+.media-card__from-tracks-item {
+    margin: 0 0 3px 0;
 }

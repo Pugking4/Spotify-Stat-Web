@@ -7,107 +7,112 @@
     <script src="js/recentlyPlayedScript.js" defer></script>
 
 </head>
-<body>
-<header>
-    <nav>
-        <a class="selected" href="recently-played">Recently Played</a>
-        <a href="stats">Stats</a>
-        <a href="api-stats">API Stats</a>
-    </nav>
-</header>
-<div class="settings-bar">
-    <div class="settings-inner">
-        <div class="settings-left">
-            <button class="tracks-setting selected">Tracks</button>
-            <button class="artists-setting">Artists</button>
-            <button class="albums-setting">Albums</button>
-        </div>
-        <div class="settings-right">
-            <label for="limit">Results</label>
-            <input
-                    id="limit"
-                    type="number"
-                    list="limits"
-                    min="1"
-                    max="100"
-                    step="1"
-                    value="10"
-            />
-            <datalist id="limits">
-                <option>5</option>
-                <option>10</option>
-                <option>25</option>
-                <option>50</option>
-                <option>100</option>
-            </datalist>
-        </div>
-    </div>
-</div>
-<main>
-    <div class="content-area">
-        <div class="recently-played-card">
-            <div class="left-card">
-                <img class="cover" src="images/placeholder.png" alt="Placeholder image.">
-                <p class="track-title">TRACK TITLE</p>
-                <p class="track-artists">TRACK ARTISTS</p>
+<body class="page">
+    <header class="page__header">
+        <nav class="navbar">
+            <ul class="navbar__list">
+                <li class="navbar__item"><a class="navbar__link navbar__link--active" href="recently-played">Recently Played</a></li>
+                <li class="navbar__item"><a class="navbar__link" href="stats">Stats</a></li>
+                <li class="navbar__item"><a class="navbar__link" href="api-stats">API Stats</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="settings-bar">
+        <div class="settings-bar__inner">
+            <div class="settings-bar__left">
+                <button class="settings-bar__item settings-bar__item--active" data-view="tracks">Tracks</button>
+                <button class="settings-bar__item" data-view="artists">Artists</button>
+                <button class="settings-bar__item" data-view="albums">Albums</button>
             </div>
-            <div class="right-card">
-                <p class="played-at">Played at PLAYED AT</p>
-                <p class="popularity">Popularity: </p>
-                <p class="album-title">From album ALBUM</p>
-                <p class="album-artists">Made by ARTISTS</p>
-                <p class="context">Played from CONTEXT</p>
-                <p class="device">on DEVICE</p>
+            <div class="settings-bar__right">
+                <label class="settings-bar__label" for="limit">Results</label>
+                <input class="settings-bar__input"
+                        id="limit"
+                        type="number"
+                        list="limits"
+                        min="1"
+                        max="100"
+                        step="1"
+                        value="10"
+                />
+                <datalist id="limits">
+                    <option>5</option>
+                    <option>10</option>
+                    <option>25</option>
+                    <option>50</option>
+                    <option>100</option>
+                </datalist>
             </div>
         </div>
     </div>
-</main>
-<footer>
-    <div class="footer-content">
-        <span class="footer-name">Created by Joshua Schneider</span>
-        <a href="https://github.com/pugking4" target="_blank" rel="noopener noreferrer">
-            github.com/pugking4
-        </a>
-    </div>
-</footer>
-
+    <main class="page__main">
+        <div class="content"></div>
+    </main>
+    <footer class="page__footer">
+        <div class="page__footer-content">
+            <span class="page__footer-author">Created by Joshua Schneider</span>
+            <a class="page__footer-author-link" href="https://github.com/pugking4" target="_blank" rel="noopener noreferrer">
+                github.com/pugking4
+            </a>
+        </div>
+    </footer>
 </body>
 
-<template id="recently-played-track-template">
-    <div class="recently-played-track-card">
-        <div class="card-top">
-            <div class="card-cover">
-                <img class="cover" src="images/placeholder.png" alt="Placeholder image">
+<template id="media-card-template">
+    <article class="media-card">
+        <div class="media-card__top">
+            <div class="media-card__cover-wrap">
+                <img class="media-card__cover" src="images/placeholder.png" alt="Placeholder image">
             </div>
-            <div class="card-details">
-                <p class="played-at"></p>
-                <p class="popularity"></p>
-                <p class="album-title"></p>
-                <p class="album-artists"></p>
-                <p class="context"></p>
-                <p class="device"></p>
+            <div class="media-card__details">
+                <!-- media-card__line template goes here (hello developers :) ) -->
             </div>
         </div>
-        <div class="card-bottom">
-            <p class="track-title bold"></p>
-            <p class="track-artists"></p>
+        <div class="media-card__bottom">
+            <p class="media-card__primary-text"></p>
+            <p class="media-card__secondary-text"></p>
         </div>
-    </div>
+    </article>
 </template>
 
-<template id="recently-played-artist-template">
-    <div class="recently-played-artist-card">
+<template id="track-media-card-details-template">
+    <p class="media-card__line media-card__line--played-at"></p>
+    <p class="media-card__line media-card__line--popularity"></p>
+    <p class="media-card__line media-card__line--album-title"></p>
+    <p class="media-card__line media-card__line--album-artists"></p>
+    <p class="media-card__line media-card__line--context"></p>
+    <p class="media-card__line media-card__line--device"></p>
+</template>
+
+<template id="artist-media-card-details-template">
+    <div class="media-card__line media-card__line--from-tracks">
+        <p class="media-card__from-tracks-label"></p>
+        <ul class="media-card__from-tracks-list"></ul>
+    </div>
+    <p class="media-card__line media-card__line--popularity"></p>
+    <p class="media-card__line media-card__line--followers"></p>
+    <p class="media-card__line media-card__line--times-appeared"></p>
+    <p class="media-card__line media-card__line--last-updated"></p>
+</template>
+
+<template id="album-media-card-details-template">
+    <div class="media-card__line media-card__line--from-tracks">
+        <p class="media-card__from-tracks-label"></p>
+        <ul class="media-card__from-tracks-list"></ul>
+    </div>
+    <p class="media-card__line media-card__line--album-type"></p>
+    <p class="media-card__line media-card__line--release-date"></p>
+    <p class="media-card__line media-card__line--times-appeared"></p>
+</template>
+
+<template id="artist-media-card-template">
+    <div class="artist-media-card">
         <div class="card-top">
             <div class="card-cover">
                 <img class="cover" src="images/placeholder.png" alt="Placeholder image">
             </div>
             <div class="card-details">
-                <p class="from-tracks"></p>
-                <ul class="tracks no-wrap"></ul>
-                <p class="popularity"></p>
-                <p class="followers"></p>
-                <p class="times-appeared"></p>
-                <p class="last-updated"></p>
+
             </div>
         </div>
         <div class="card-bottom">
@@ -117,18 +122,14 @@
     </div>
 </template>
 
-<template id="recently-played-album-template">
-    <div class="recently-played-album-card">
+<template id="album-media-card-template">
+    <div class="album-media-card">
         <div class="card-top">
             <div class="card-cover">
                 <img class="cover" src="images/placeholder.png" alt="Placeholder image">
             </div>
             <div class="card-details">
-                <p class="from-tracks"></p>
-                <ul class="tracks"></ul>
-                <p class="album-type"></p>
-                <p class="release-date"></p>
-                <p class="times-appeared no-wrap"></p>
+
             </div>
         </div>
         <div class="card-bottom">
