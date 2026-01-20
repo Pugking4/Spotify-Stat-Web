@@ -52,7 +52,6 @@ function indexAlbums(tracks) {
             byAlbumId.set(album.id, entry);
         }
         entry.count++;
-        console.log(`Adding ${track.name}`);
         entry.trackNames.add(track.name);
     }
     return byAlbumId;
@@ -107,11 +106,12 @@ function createArtistMediaCard(entry) {
 
     let listLabel = details.querySelector(".media-card__from-tracks-label");
     let list = details.querySelector('.media-card__from-tracks-list');
-    if (entry.trackNames.length > 1) {
+    if (entry.trackNames.size > 1) {
         listLabel.textContent = `From tracks:`;
-        for (let t of entry.trackNames) {
+        for (const t of entry.trackNames) {
             let listItem = document.createElement('li');
             listItem.classList.add("media-card__from-tracks-item");
+            console.log(`Multiple tracks: ${t}`);
             listItem.textContent = t;
             list.appendChild(listItem);
         }
@@ -146,9 +146,9 @@ function createAlbumMediaCard(entry) {
 
     const list = details.querySelector('.media-card__from-tracks-list');
     const label = details.querySelector('.media-card__from-tracks-label');
-    if (entry.trackNames.length > 1) {
+    if (entry.trackNames.size > 1) {
         label.textContent = `From tracks:`;
-        for (let t of album.from_tracks) {
+        for (const t of entry.trackNames) {
             let listItem = document.createElement('li');
             listItem.classList.add("media-card__from-tracks-item");
             listItem.textContent = t;
@@ -177,7 +177,7 @@ function createAlbumMediaCard(entry) {
 }
 
 function getSettingsButton(view) {
-    for (let btn of settingsButtons) {
+    for (const btn of settingsButtons) {
         if (btn.dataset.view == view) return btn;
     }
     return "error";
@@ -191,7 +191,6 @@ async function loadRecentlyPlayed(limit) {
     }
 
     const data = await response.json();   // array of tracks
-    console.log(data);
     for (let i = 0; i < data.length; i++) {
         data[i].time_finished = formatLocalTime(data[i].time_finished);
     }
@@ -205,7 +204,7 @@ function capitaliseFirstLetter(val) {
 function renderTracks(tracks) {
     contentArea.innerHTML = '';
 
-    for (let track of tracks) {
+    for (const track of tracks) {
         createTrackMediaCard(track);
     }
 }
@@ -251,14 +250,14 @@ function albumsButtonClickEvent(data) {
 }
 
 function getCurrentSetting() {
-    for (let btn of settingsButtons) {
+    for (const btn of settingsButtons) {
         if (btn.classList.contains("settings-bar__item--active")) return btn.dataset.view;
     }
     return "none"
 }
 
 function assignSettingButtonEvents(data) {
-    for (let btn of settingsButtons) {
+    for (const btn of settingsButtons) {
         switch (btn.dataset.view) {
             case "tracks":
                 btn.onclick = () => tracksButtonClickEvent(data);
