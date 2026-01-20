@@ -1,29 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Spotify-Stat-Web</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-<header>
-    <nav>
-        <a href="recently-played">Recently Played</a>
-        <a href="stats">Stats</a>
-        <a class="selected" href="api-stats">API Stats</a>
-    </nav>
-</header>
-<main>
-    <h1>Work in progress!</h1>
-    <p>This page is still being built :)</p>
-</main>
-<footer>
-    <div class="footer-content">
-        <span class="footer-name">Created by Joshua Schneider</span>
-        <a href="https://github.com/pugking4" target="_blank" rel="noopener noreferrer">
-            github.com/pugking4
-        </a>
-    </div>
-</footer>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>API Stats</title>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="icon" href="images/logo-white.svg" type="image/x-icon">
+        <link rel="icon" href="images/logo-white.svg" type="image/x-icon" media="(prefers-color-scheme: light)">
+        <link rel="icon" href="images/logo-black.svg" type="image/x-icon" media="(prefers-color-scheme: dark)">
+        <script src="js/recentlyPlayedScript.js" defer></script>
+    </head>
+    <body class="page">
+        <header class="page__header">
+            <nav class="navbar">
+                <div class="navbar__left">
+                    <div class="navbar__named-logo-wrap">
+                        <img class="navbar__named-logo" src="images/named_logo-white.svg" alt="Spotify-Stat-Web Logo">
+                    </div>
+                </div>
+                <div class="navbar__right">
+                    <ul class="navbar__list">
+                        <li class="navbar__item"><a class="navbar__link navbar__link--active" href="recently-played">Recently Played</a></li>
+                        <li class="navbar__item"><a class="navbar__link" href="stats">Stats</a></li>
+                        <li class="navbar__item"><a class="navbar__link" href="api-stats">API Stats</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <div class="settings-bar">
+            <div class="settings-bar__inner">
+                <div class="settings-bar__left">
+                    <button class="settings-bar__item settings-bar__item--active" data-view="tracks">Tracks</button>
+                    <button class="settings-bar__item" data-view="artists">Artists</button>
+                    <button class="settings-bar__item" data-view="albums">Albums</button>
+                </div>
+                <div class="settings-bar__right">
+                    <label class="settings-bar__label" for="limit">Results</label>
+                    <input class="settings-bar__input"
+                           id="limit"
+                           type="number"
+                           list="limits"
+                           min="1"
+                           max="100"
+                           step="1"
+                           value="10"
+                    />
+                    <datalist id="limits">
+                        <option>5</option>
+                        <option>10</option>
+                        <option>25</option>
+                        <option>50</option>
+                        <option>100</option>
+                    </datalist>
+                </div>
+            </div>
+        </div>
+        <main class="page__main">
+            <div class="content"></div>
+            <h1>Work in progress!</h1>
+            <p>This page is still being built :)</p>
+        </main>
+        <footer class="page__footer">
+            <div class="page__footer-content">
+                <span class="page__footer-author">Created by Joshua Schneider</span>
+                <a class="page__footer-author-link" href="https://github.com/pugking4" target="_blank" rel="noopener noreferrer">
+                    github.com/pugking4
+                </a>
+            </div>
+        </footer>
+    </body>
 </html>

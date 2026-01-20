@@ -1,47 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Spotify-Stat-Web</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-<header>
-    <nav>
-        <a href="recently-played">Recently Played</a>
-        <a class="selected" href="stats">Stats</a>
-        <a href="api-stats">API Stats</a>
-    </nav>
-</header>
-<div class="settings-bar">
-    <div class="settings-inner">
-        <div class="settings-left">
-            <button class="all-time selected">All-Time</button>
-            <button class="day">Day</button>
-            <button class="week">Week</button>
-            <button class="month">Month</button>
-            <button class="year">Year</button>
-            <button class="rolling">Rolling</button>
+    <head>
+        <meta charset="UTF-8">
+        <title>Stats</title>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="icon" href="images/logo-white.svg" type="image/x-icon">
+        <link rel="icon" href="images/logo-white.svg" type="image/x-icon" media="(prefers-color-scheme: light)">
+        <link rel="icon" href="images/logo-black.svg" type="image/x-icon" media="(prefers-color-scheme: dark)">
+        <script src="js/recentlyPlayedScript.js" defer></script>
+    </head>
+    <header class="page__header">
+        <nav class="navbar">
+            <div class="navbar__left">
+                <div class="navbar__named-logo-wrap">
+                    <img class="navbar__named-logo" src="images/named_logo-white.svg" alt="Spotify-Stat-Web Logo">
+                </div>
+            </div>
+            <div class="navbar__right">
+                <ul class="navbar__list">
+                    <li class="navbar__item"><a class="navbar__link navbar__link--active" href="recently-played">Recently Played</a></li>
+                    <li class="navbar__item"><a class="navbar__link" href="stats">Stats</a></li>
+                    <li class="navbar__item"><a class="navbar__link" href="api-stats">API Stats</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <body>
+        <header class="page__header">
+            <nav class="navbar">
+                <ul class="navbar__list">
+                    <li class="navbar__item"><a class="navbar__link navbar__link--active" href="recently-played">Recently Played</a></li>
+                    <li class="navbar__item"><a class="navbar__link" href="stats">Stats</a></li>
+                    <li class="navbar__item"><a class="navbar__link" href="api-stats">API Stats</a></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="settings-bar">
+            <div class="settings-inner">
+                <div class="settings-left">
+                    <button class="all-time selected">All-Time</button>
+                    <button class="day">Day</button>
+                    <button class="week">Week</button>
+                    <button class="month">Month</button>
+                    <button class="year">Year</button>
+                    <button class="rolling">Rolling</button>
+                </div>
+                <div class="settings-right">
+                    <label for="date-selector"></label>
+                    <input type="date"
+                        id="date-selector">
+                </div>
+            </div>
         </div>
-        <div class="settings-right">
-            <label for="date-selector"></label>
-            <input type="date"
-                id="date-selector">
-        </div>
-    </div>
-</div>
-<main>
-    <h1>Work in progress!</h1>
-    <p>This page is still being built :)</p>
-</main>
-<footer>
-    <div class="footer-content">
-        <span class="footer-name">Created by Joshua Schneider</span>
-        <a href="https://github.com/pugking4" target="_blank" rel="noopener noreferrer">
-            github.com/pugking4
-        </a>
-    </div>
-</footer>
-</body>
-
+        <main class="page__main">
+            <div class="content"></div>
+            <h1>Work in progress!</h1>
+            <p>This page is still being built :)</p>
+        </main>
+        <footer class="page__footer">
+            <div class="page__footer-content">
+                <span class="page__footer-author">Created by Joshua Schneider</span>
+                <a class="page__footer-author-link" href="https://github.com/pugking4" target="_blank" rel="noopener noreferrer">
+                    github.com/pugking4
+                </a>
+            </div>
+        </footer>
+    </body>
 </html>

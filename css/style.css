@@ -61,10 +61,25 @@
 /* Navigation bar */
 .navbar {
     display: flex;
-    justify-content: flex-end; /* Align links to the right */
+    flex-direction: row;
     align-items: center;
-    height: 60px; /* Set a fixed height */
-    padding: 0 20px; /* Add padding on the sides */
+    justify-content: space-between; /* logo on left, links on right */
+    height: 68px;
+    padding: 0 20px;
+}
+
+.navbar__left,
+.navbar__right {
+    display: flex;          /* so justify-content works */
+    align-items: center;
+}
+
+.navbar__left {
+    justify-content: flex-start;
+}
+
+.navbar__right {
+    justify-content: flex-end;
 }
 
 .navbar__list {
@@ -94,6 +109,16 @@
 
 .navbar__link--active {
     font-weight: bold;
+}
+
+.navbar__named-logo-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.navbar__named-logo {
+    height: 40px; /* or whatever fits your navbar height (68px total) */
+    width: auto;  /* keeps aspect ratio */
 }
 
 
