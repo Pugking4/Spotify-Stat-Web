@@ -256,6 +256,9 @@
 
 .media-card__from-tracks-label {
     margin: 0 0 3px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .media-card__from-tracks-list {

@@ -26,12 +26,45 @@ function formatLocalTime(isoString) {
     }
 }
 
+function indexArtists(tracks) {
+    const byArtistId = new Map();
+    for (const track of tracks) {
+        for (const artist of track.artists) {
+            let entry = byArtistId.get(artist.id);
+            if (!entry) {
+                entry = { artist, count: 0, trackNames: new Set() };
+                byArtistId.set(artist.id, entry);
+            }
+            entry.count++;
+            entry.trackNames.add(track.name);
+        }
+    }
+    return byArtistId;
+}
+
+function indexAlbums(tracks) {
+    const byAlbumId = new Map(); // id -> { album, count, trackNames:Set }
+    for (const track of tracks) {
+        const album = track.album;
+        let entry = byAlbumId.get(album.id);
+        if (!entry) {
+            entry = { album, count: 0, trackNames: new Set() };
+            byAlbumId.set(album.id, entry);
+        }
+        entry.count++;
+        console.log(`Adding ${track.name}`);
+        entry.trackNames.add(track.name);
+    }
+    return byAlbumId;
+}
+
+
 function createMediaCard(primaryText, secondaryText, cover, altCoverText) {
     const fragment = mediaCardTemplate.content.cloneNode(true);
     const card = fragment.querySelector('.media-card');
 
 
-    card.querySelector('.media-card__cover').src = cover ?? "images/placeholder.png";
+    card.querySelector('.media-card__cover').src = cover ?? "images/no_accounts_placeholder.png";
     card.querySelector('.media-card__cover').alt = altCoverText;
     card.querySelector('.media-card__primary-text').textContent = primaryText;
     card.querySelector('.media-card__secondary-text').textContent = secondaryText;
@@ -65,125 +98,82 @@ function createTrackMediaCard(track) {
     return card;
 }
 
-function createArtistMediaCard(track, existingArtists, allTracks) {
-    for (let artist of track.artists) {
-        if (existingArtists.includes(artist.id)) {
-            return;
-        } else {
-            existingArtists.push(artist.id);
-            let sum = 0;
-            let fromTracks = [];
-            for (let t of allTracks) {
-                for (let a of t.artists) {
-                    if (a.id === artist.id) {
-                        sum++;
-                        if (!fromTracks.includes(t.name)) {
-                            fromTracks.push(t.name);
-                        }
-                    }
-                }
-            }
+function createArtistMediaCard(entry) {
+    const artist = entry.artist;
 
-            artist.times_appeared = sum;
-            artist.from_tracks = fromTracks;
+    let genresText = artist.genres ? artist.genres.split(',').join(', ') : '';
+    const card = createMediaCard(artist.name, genresText, artist.image, artist.name);
+    const details = artistDetailsTemplate.content.cloneNode(true);
 
-
-            let genresText = artist.genres ? artist.genres.split(',').join(', ') : '';
-            const card = createMediaCard(artist.name, genresText, artist.image, artist.name);
-            const details = artistDetailsTemplate.content.cloneNode(true);
-
-
-            let listLabel = details.querySelector(".media-card__from-tracks-label");
-            let list = details.querySelector('.media-card__from-tracks-list');
-            if (artist.from_tracks.length > 1) {
-                listLabel.textContent = `From tracks:`;
-
-                for (let t of artist.from_tracks) {
-                    let listItem = document.createElement('li');
-                    listItem.classList.add("media-card__from-tracks-item");
-                    listItem.textContent = t;
-                    list.appendChild(listItem);
-                }
-            } else {
-                listLabel.textContent = `From track: ${artist.from_tracks[0]}`;
-                list.remove();
-            }
-
-            details.querySelector('.media-card__line--popularity').textContent =
-                `Popularity: ${artist.popularity}`;
-            details.querySelector('.media-card__line--followers').textContent =
-                `Followers: ${artist.followers}`;
-            if (artist.times_appeared > 1) {
-                details.querySelector('.media-card__line--times-appeared').textContent =
-                    `Appeared in tracks ${artist.times_appeared} times`;
-            } else {
-                details.querySelector('.media-card__line--times-appeared').textContent =
-                    `Appeared in tracks ${artist.times_appeared} time`;
-            }
-
-            details.querySelector('.media-card__line--last-updated').textContent =
-                `Updated on ${formatLocalTime(artist.updated_at)}`;
-
-            let cardDetails = card.querySelector(".media-card__details");
-            cardDetails.appendChild(details);
-            return card;
+    let listLabel = details.querySelector(".media-card__from-tracks-label");
+    let list = details.querySelector('.media-card__from-tracks-list');
+    if (entry.trackNames.length > 1) {
+        listLabel.textContent = `From tracks:`;
+        for (let t of entry.trackNames) {
+            let listItem = document.createElement('li');
+            listItem.classList.add("media-card__from-tracks-item");
+            listItem.textContent = t;
+            list.appendChild(listItem);
         }
+    } else {
+        listLabel.textContent = `From track: ${[...entry.trackNames][0]}`;
+        list.remove();
     }
+    details.querySelector('.media-card__line--popularity').textContent =
+        `Popularity: ${artist.popularity}`;
+    details.querySelector('.media-card__line--followers').textContent =
+        `Followers: ${artist.followers}`;
+    if (entry.count > 1) {
+        details.querySelector('.media-card__line--times-appeared').textContent =
+            `Appeared in tracks ${entry.count} times`;
+    } else {
+        details.querySelector('.media-card__line--times-appeared').textContent =
+            `Appeared in tracks ${entry.count} time`;
+    }
+    details.querySelector('.media-card__line--last-updated').textContent =
+        `Updated on ${formatLocalTime(artist.updated_at)}`;
+    let cardDetails = card.querySelector(".media-card__details");
+    cardDetails.appendChild(details);
+    return card;
 }
 
-function createAlbumMediaCard(album, existingAlbums, allTracks) {
-    if (!existingAlbums.includes(album.id)) {
-        existingAlbums.push(album.id);
-        let sum = 0;
-        let fromTracks = [];
-        for (let t of allTracks) {
-            if (t.album.id === album.id) {
-                sum++;
-                if (!fromTracks.includes(t.name)) {
-                    fromTracks.push(t.name);
-                }
-            }
+function createAlbumMediaCard(entry) {
+    const album = entry.album;
+
+    const artistsText = album.artists.map(a => a.name).join(', ');
+    const card = createMediaCard(album.name, artistsText, album.cover, album.name);
+    const details = albumDetailsTemplate.content.cloneNode(true);
+
+    const list = details.querySelector('.media-card__from-tracks-list');
+    const label = details.querySelector('.media-card__from-tracks-label');
+    if (entry.trackNames.length > 1) {
+        label.textContent = `From tracks:`;
+        for (let t of album.from_tracks) {
+            let listItem = document.createElement('li');
+            listItem.classList.add("media-card__from-tracks-item");
+            listItem.textContent = t;
+            list.appendChild(listItem);
         }
-
-        album.times_appeared = sum;
-        album.from_tracks = fromTracks;
-
-        let artistsText = album.artists.map(a => a.name).join(', ');
-        const card = createMediaCard(album.name, artistsText, album.cover, album.name);
-        const details = albumDetailsTemplate.content.cloneNode(true);
-
-        let list = details.querySelector('.media-card__from-tracks-list');
-        let label = details.querySelector('.media-card__from-tracks-label');
-        if (album.from_tracks.length > 1) {
-            label.textContent = `From tracks:`;
-
-            for (let t of album.from_tracks) {
-                let listItem = document.createElement('li');
-                listItem.classList.add("media-card__from-tracks-item");
-                listItem.textContent = t;
-                list.appendChild(listItem);
-            }
-        } else {
-            label.textContent = `From track: ${album.from_tracks[0]}`;
-            list.remove();
-        }
-
-        details.querySelector('.media-card__line--album-type').textContent =
-            `This album is a ${capitaliseFirstLetter(album.album_type)}`;
-        details.querySelector('.media-card__line--release-date').textContent =
-            `Released on ${album.release_date}`;
-        if (album.times_appeared > 1) {
-            details.querySelector('.media-card__line--times-appeared').textContent =
-                `Listened to tracks within ${album.times_appeared} times`;
-        } else {
-            details.querySelector('.media-card__line--times-appeared').textContent =
-                `Listened to tracks within 1 time`;
-        }
-
-        let cardDetails = card.querySelector(".media-card__details");
-        cardDetails.appendChild(details);
-        return card;
+    } else {
+        label.textContent = `From track: ${[...entry.trackNames][0]}`;
+        list.remove();
     }
+
+    details.querySelector('.media-card__line--album-type').textContent =
+        `This album is a ${capitaliseFirstLetter(album.album_type)}`;
+    details.querySelector('.media-card__line--release-date').textContent =
+        `Released on ${album.release_date}`;
+    if (entry.count > 1) {
+        details.querySelector('.media-card__line--times-appeared').textContent =
+            `Listened to tracks within ${entry.count} times`;
+    } else {
+        details.querySelector('.media-card__line--times-appeared').textContent =
+            `Listened to tracks within 1 time`;
+    }
+
+    let cardDetails = card.querySelector(".media-card__details");
+    cardDetails.appendChild(details);
+    return card;
 }
 
 function getSettingsButton(view) {
@@ -222,11 +212,11 @@ function renderTracks(tracks) {
 
 function renderArtists(data) {
     contentArea.innerHTML = '';
-    let existingArtists = [];
-    let tracks = data.map(x => x.track);
+    const tracks = data.map(x => x.track);
+    const indexedArtists = indexArtists(tracks);
 
-    for (let track of tracks) {
-        createArtistMediaCard(track, existingArtists, tracks);
+    for (const entry of indexedArtists.values()) {
+        createArtistMediaCard(entry);
     }
 }
 
@@ -237,12 +227,11 @@ function updateSelectedOption(selectedElement) {
 
 function renderAlbums(data) {
     contentArea.innerHTML = '';
-    let existingAlbums = [];
     let tracks = data.map(x => x.track);
-    let albums = tracks.map(x => x.album);
+    const indexedAlbums = indexAlbums(tracks);
 
-    for (let album of albums) {
-        createAlbumMediaCard(album, existingAlbums, tracks);
+    for (const result of indexedAlbums.values()) {
+        createAlbumMediaCard(result);
     }
 }
 
