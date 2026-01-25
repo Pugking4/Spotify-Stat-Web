@@ -2,8 +2,8 @@
 ### *Order of implementation is top to bottom
 
 ## *Current planned features
-* Add API stats calculation to API
-* API stats page for api stats
+* ~~Add API stats calculation to API~~
+* ~~API stats page for api stats~~
 * Replace grey card background in recently played
   * Create new background from either:
     * Expanded cover art to fill whole card

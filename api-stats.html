@@ -7,7 +7,9 @@
         <link rel="icon" href="images/logo-white.svg" type="image/x-icon">
         <link rel="icon" href="images/logo-white.svg" type="image/x-icon" media="(prefers-color-scheme: light)">
         <link rel="icon" href="images/logo-black.svg" type="image/x-icon" media="(prefers-color-scheme: dark)">
-        <script src="js/recentlyPlayedScript.js" defer></script>
+        <script src="js/apiStatsScript.js" defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/echarts@6.0.0/dist/echarts.min.js"></script>
+
     </head>
     <body class="page">
         <header class="page__header">
@@ -19,45 +21,99 @@
                 </div>
                 <div class="navbar__right">
                     <ul class="navbar__list">
-                        <li class="navbar__item"><a class="navbar__link navbar__link--active" href="recently-played">Recently Played</a></li>
+                        <li class="navbar__item"><a class="navbar__link" href="recently-played">Recently Played</a></li>
                         <li class="navbar__item"><a class="navbar__link" href="stats">Stats</a></li>
-                        <li class="navbar__item"><a class="navbar__link" href="api-stats">API Stats</a></li>
+                        <li class="navbar__item"><a class="navbar__link navbar__link--active" href="api-stats">API Stats</a></li>
                     </ul>
                 </div>
             </nav>
         </header>
         <div class="settings-bar">
             <div class="settings-bar__inner">
-                <div class="settings-bar__left">
-                    <button class="settings-bar__item settings-bar__item--active" data-view="tracks">Tracks</button>
-                    <button class="settings-bar__item" data-view="artists">Artists</button>
-                    <button class="settings-bar__item" data-view="albums">Albums</button>
-                </div>
-                <div class="settings-bar__right">
-                    <label class="settings-bar__label" for="limit">Results</label>
-                    <input class="settings-bar__input"
-                           id="limit"
-                           type="number"
-                           list="limits"
-                           min="1"
-                           max="100"
-                           step="1"
-                           value="10"
-                    />
-                    <datalist id="limits">
-                        <option>5</option>
-                        <option>10</option>
-                        <option>25</option>
-                        <option>50</option>
-                        <option>100</option>
-                    </datalist>
-                </div>
+                <div class="settings-bar__left"></div>
+                <div class="settings-bar__right"></div>
             </div>
         </div>
         <main class="page__main">
-            <div class="content"></div>
-            <h1>Work in progress!</h1>
-            <p>This page is still being built :)</p>
+            <div class="content api-stats">
+                <!-- Compact -->
+                <section class="api-stats__card api-stats__card--compact">
+                    <div class="api-stats__compact">
+                        <div class="api-stats__compact-left">
+                            <p class="api-stats__eyebrow">API Stats</p>
+                            <p class="api-stats__headline">
+                                Server <span class="api-stats__mono" id="hostname">{SERVER}</span>
+                                <span class="api-stats__badge" id="version">v{VERSION}</span>
+                            </p>
+                            <p class="api-stats__subtext" id="summary">
+                                Last updated: <span id="lastUpdated">just now</span>
+                            </p>
+                        </div>
+
+                        <div class="api-stats__kpis">
+                            <div class="api-stats__kpi">
+                                <span class="api-stats__kpi-label">Requests</span>
+                                <span class="api-stats__kpi-value" id="totalRequests">{REQUESTS}</span>
+                            </div>
+                            <div class="api-stats__kpi">
+                                <span class="api-stats__kpi-label">Uptime</span>
+                                <span class="api-stats__kpi-value" id="uptime_s">{UPTIME_S}</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Latency -->
+                <section class="api-stats__card api-stats__card--latency">
+                    <header class="api-stats__card-header">
+                        <h3 class="api-stats__title">Latency</h3>
+                        <span class="api-stats__meta" id="latencyMeta"></span>
+
+                        <div class="api-stats__bucket-toggle api-stats__bucket-toggle--latency" data-value="1m">
+                            <span class="api-stats__bucket-label api-stats__bucket-label--active">1m</span>
+                            <span class="api-stats__bucket-label">5m</span>
+                            <div class="api-stats__bucket-thumb"></div>
+                        </div>
+                    </header>
+                    <div id="latencyChart" class="api-stats__chart api-stats__chart--sm"></div>
+                </section>
+
+                <!-- Uptime -->
+                <section class="api-stats__card api-stats__card--uptime">
+                    <header class="api-stats__card-header">
+                        <h3 class="api-stats__title">Uptime</h3>
+                        <span class="api-stats__meta" id="uptimeMeta"></span>
+                    </header>
+
+                    <div class="api-stats__uptime-kpis">
+                        <div class="api-stats__uptime-kpi api-stats__uptime-kpi--primary">
+                            <span class="api-stats__uptime-label">24hr</span>
+                            <span class="api-stats__uptime-value" id="uptime24h">—</span>
+                        </div>
+
+                        <div class="api-stats__uptime-kpi">
+                            <span class="api-stats__uptime-label">7 Days</span>
+                            <span class="api-stats__uptime-value api-stats__uptime-value--secondary" id="uptime7d">—</span>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- Traffic -->
+                <section class="api-stats__card api-stats__card--traffic">
+                    <header class="api-stats__card-header">
+                        <h3 class="api-stats__title">Traffic</h3>
+                        <span class="api-stats__meta" id="trafficMeta"></span>
+
+                        <div class="api-stats__bucket-toggle api-stats__bucket-toggle--traffic" data-value="1m">
+                            <span class="api-stats__bucket-label api-stats__bucket-label--active">1m</span>
+                            <span class="api-stats__bucket-label">5m</span>
+                            <div class="api-stats__bucket-thumb"></div>
+                        </div>
+                    </header>
+                    <div id="trafficChart" class="api-stats__chart api-stats__chart--lg"></div>
+                </section>
+            </div>
         </main>
         <footer class="page__footer">
             <div class="page__footer-content">

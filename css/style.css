@@ -204,6 +204,313 @@
     gap: 10px;                     /* use gap instead of margin on cards */
 }
 
+.content.api-stats{
+    display: grid;
+    width: 900px;
+    padding: 10px;
+    gap: 10px;
+    background: whitesmoke;
+
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+    "compact compact"
+    "latency uptime"
+    "traffic traffic";
+}
+
+
+/* API Stats Card */
+.api-stats__card{
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #d9d9d9;
+    padding: 12px 16px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.api-stats__card--compact{ grid-area: compact; }
+.api-stats__card--latency{ grid-area: latency; }
+.api-stats__card--uptime { grid-area: uptime; }
+.api-stats__card--traffic{ grid-area: traffic; }
+
+.api-stats__card--compact{
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* Accent strip */
+/* Accent strip (base: exists on every card) */
+.api-stats__card::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: linear-gradient(180deg, blueviolet, #3aa0ff); /* default */
+}
+
+/* Per-card accents (override just the background) */
+.api-stats__card--compact::before{ background: linear-gradient(180deg, blueviolet, #3aa0ff); }
+.api-stats__card--latency::before{ background: linear-gradient(180deg, #ff4d4d, #ff9f43); }
+.api-stats__card--uptime::before { background: linear-gradient(180deg, #2ecc71, #a3ffcf); }
+.api-stats__card--traffic::before{ background: linear-gradient(180deg, #5b8cff, #b48bff); }
+
+.api-stats__compact{
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-left: 18px; /* room for accent strip */
+}
+
+.api-stats__eyebrow,
+.api-stats__card-header{
+    margin: 0 0 4px 0;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.75;
+}
+
+.api-stats__headline{
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.api-stats__subtext{
+    margin: 6px 0 0 0;
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.api-stats__mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.api-stats__badge{
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    border: 1px solid rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.55);
+}
+
+.api-stats__kpis{
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.api-stats__kpi{
+    min-width: 110px;
+    text-align: right;
+}
+
+.api-stats__kpi-label{
+    display:block;
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+.api-stats__kpi-value{
+    display:block;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+@media (max-width: 920px){
+    .content.api-stats{
+        width: 100%;
+        grid-template-columns: 1fr;
+        grid-template-areas:
+      "compact"
+      "latency"
+      "uptime"
+      "traffic";
+    }
+}
+/* --- Uptime card layout (final) --- */
+.api-stats__card--uptime{
+    display: flex;
+    flex-direction: column;
+}
+
+.api-stats__card--uptime .api-stats__card-header{
+    align-items: center; /* not baseline */
+}
+
+.api-stats__card--uptime .api-stats__uptime-kpis{
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;   /* makes both KPI boxes same height */
+    gap: 12px;
+    margin: 10px 0 0 0;
+}
+
+.api-stats__card--uptime .api-stats__uptime-kpi{
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.35);
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+.api-stats__card--uptime .api-stats__uptime-kpi--primary{
+    flex: 1.15;
+}
+
+.api-stats__card--uptime .api-stats__uptime-label{
+    display: block;
+    margin-bottom: 10px;
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+.api-stats__card--uptime .api-stats__uptime-value{
+    display: block;
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1.0;
+}
+
+.api-stats__card--uptime .api-stats__uptime-value--secondary{
+    font-size: 22px;
+    font-weight: 850;
+    opacity: 0.9;
+}
+
+/* Push chart to the bottom to use the empty space */
+.api-stats__card--uptime #uptimeChart{
+    margin-top: auto;
+}
+
+
+.api-stats__card--latency,
+.api-stats__card--uptime {
+    width: 445px;
+    height: 271px;
+}
+
+/* Make room for the accent strip */
+.api-stats__card{ padding-left: 18px; }
+
+.api-stats__card-header{
+    display:flex;
+    /*align-items: baseline;*/
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.api-stats__title{
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.api-stats__meta{
+    font-size: 12px;
+    opacity: 0.75;
+    white-space: nowrap;
+}
+
+.api-stats__chart--sm {
+    width: 410px;
+    height: 220px;
+}
+
+.api-stats__chart--lg {
+    width: 100%;
+    height: 220px;
+}
+
+.api-stats__chart-stack {
+    width: 100%;
+}
+
+.api-stats__card--latency { --accent: #ff6b6b; }
+.api-stats__card--uptime  { --accent: #2ecc71; }
+.api-stats__card--traffic { --accent: #5b8cff; }
+.api-stats__card--compact { --accent: #8b5cf6; }
+
+.api-stats__bucket-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 78px;
+    height: 28px;
+    padding: 3px;
+    border-radius: 999px;
+
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(6px);
+
+    border: 1px solid rgba(0,0,0,0.12);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6),
+    0 2px 6px rgba(0,0,0,0.08);
+
+    cursor: pointer;
+    transition: background 150ms ease, box-shadow 150ms ease;
+}
+
+.api-stats__bucket-toggle:hover {
+    background: rgba(255,255,255,0.7);
+}
+
+.api-stats__bucket-label {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #666;
+    transition: color 140ms ease;
+    pointer-events: none;
+}
+
+.api-stats__bucket-label--active {
+    color: white;
+}
+
+.api-stats__bucket-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    height: calc(100% - 6px);
+
+    background: var(--accent, #5b8cff);
+    border-radius: 999px;
+
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+
+    transition: transform 180ms cubic-bezier(.2,.8,.2,1),
+    background 120ms ease;
+}
+
+/* Slide animation */
+.api-stats__bucket-toggle[data-value="5m"] .api-stats__bucket-thumb {
+    transform: translateX(100%);
+}
+
+
+.api-stats__bucket-toggle:active {
+    transform: scale(0.97);
+}
+
 
 /* Media Card */
 .media-card {
