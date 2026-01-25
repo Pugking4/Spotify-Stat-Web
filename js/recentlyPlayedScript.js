@@ -80,15 +80,15 @@ function createTrackMediaCard(track) {
     let card = createMediaCard(track.track.name, artistsText, track.track.album.cover, track.track.name);
 
     details.querySelector('.media-card__line--played-at').textContent =
-        `Played on ${track.time_finished}`;
+        `Played on ${track.timeFinished}`;
     details.querySelector('.media-card__line--popularity').textContent =
-        `Popularity: ${track.current_popularity}`;
+        `Popularity: ${track.currentPopularity}`;
     details.querySelector('.media-card__line--album-title').textContent =
         `From ${track.track.album.name}`;
     details.querySelector('.media-card__line--album-artists').textContent =
-        `${capitaliseFirstLetter(track.track.album.album_type)} by ${track.track.album.artists.map(x => x.name).join(", ")}`;
+        `${capitaliseFirstLetter(track.track.album.type)} by ${track.track.album.artists.map(x => x.name).join(", ")}`;
     details.querySelector('.media-card__line--context').textContent =
-        `Played from ${track.context_type}`;
+        `Played from ${track.contextType}`;
     details.querySelector('.media-card__line--device').textContent =
         `on ${track.device.name} (${track.device.type})`;
 
@@ -131,7 +131,7 @@ function createArtistMediaCard(entry) {
             `Appeared in tracks ${entry.count} time`;
     }
     details.querySelector('.media-card__line--last-updated').textContent =
-        `Updated on ${formatLocalTime(artist.updated_at)}`;
+        `Updated on ${formatLocalTime(artist.updatedAt)}`;
     let cardDetails = card.querySelector(".media-card__details");
     cardDetails.appendChild(details);
     return card;
@@ -160,9 +160,9 @@ function createAlbumMediaCard(entry) {
     }
 
     details.querySelector('.media-card__line--album-type').textContent =
-        `This album is a ${capitaliseFirstLetter(album.album_type)}`;
+        `This album is a ${capitaliseFirstLetter(album.type)}`;
     details.querySelector('.media-card__line--release-date').textContent =
-        `Released on ${album.release_date}`;
+        `Released on ${album.releaseDate}`;
     if (entry.count > 1) {
         details.querySelector('.media-card__line--times-appeared').textContent =
             `Listened to tracks within ${entry.count} times`;
@@ -192,7 +192,7 @@ async function loadRecentlyPlayed(limit) {
 
     const data = await response.json();   // array of tracks
     for (let i = 0; i < data.length; i++) {
-        data[i].time_finished = formatLocalTime(data[i].time_finished);
+        data[i].timeFinished = formatLocalTime(data[i].timeFinished);
     }
     return data;
 }
