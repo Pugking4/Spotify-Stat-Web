@@ -100,7 +100,7 @@ function createTrackMediaCard(track) {
 function createArtistMediaCard(entry) {
     const artist = entry.artist;
 
-    let genresText = artist.genres ? artist.genres.split(',').join(', ') : '';
+    let genresText = artist.genres ? artist.genres.join(', ') : '';
     const card = createMediaCard(artist.name, genresText, artist.image, artist.name);
     const details = artistDetailsTemplate.content.cloneNode(true);
 
